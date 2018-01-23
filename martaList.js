@@ -17,13 +17,13 @@ var atlHumidity = "";
 
 //Weather section:
 $.ajax({
-    url: "http://api.openweathermap.org/data/2.5/weather?q=Atlanta&appid=142f7568e1fde63858ead859d2bd2260&units=imperial",
+    url: "https://api.openweathermap.org/data/2.5/weather?q=Atlanta&appid=142f7568e1fde63858ead859d2bd2260&units=imperial",
     method: "GET"
 }).done(function(weatherData) {
     weatherDesc = weatherData.weather[0].description;
     picImg = weatherData.weather[0].icon;
-    picImgUrl = "http://openweathermap.org/img/w/" + picImg + ".png";
-    //picImgUrl = "http://openweathermap.org/img/w/11d.png"; 
+    picImgUrl = "https://openweathermap.org/img/w/" + picImg + ".png";
+    //picImgUrl = "https://openweathermap.org/img/w/11d.png"; 
     atlTemp = weatherData.main.temp;
     atlHumidity = weatherData.main.humidity;
 
