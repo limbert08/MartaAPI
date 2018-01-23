@@ -8,8 +8,40 @@ const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
 var queryURLBase = "http://developer.itsmarta.com/RealtimeTrain/RestServiceNextTrain/GetRealtimeArrivals?apikey=dbfb261c-c806-45fb-88b1-25755e6de05e";
 
-// Counter to keep track of article numbers as they come in
-var articleCounter = 0;
+
+var weatherDesc = "";
+var picImg = "";
+var picImgUrl = "";
+var atlTemp = "";
+var atlHumidity = "";
+
+//Weather section:
+$.ajax({
+    url: "http://api.openweathermap.org/data/2.5/weather?q=Atlanta&appid=142f7568e1fde63858ead859d2bd2260&units=imperial",
+    method: "GET"
+}).done(function(weatherData) {
+    weatherDesc = weatherData.weather[0].description;
+    picImg = weatherData.weather[0].icon;
+    picImgUrl = "http://openweathermap.org/img/w/" + picImg + ".png";
+    //picImgUrl = "http://openweathermap.org/img/w/11d.png"; 
+    atlTemp = weatherData.main.temp;
+    atlHumidity = weatherData.main.humidity;
+
+    //console.log(weatherDesc);
+    console.log(weatherDesc + " " + picImg + " " + atlTemp);
+    console.log(picImgUrl);
+
+    $("img").attr("src", picImgUrl);
+
+    $("#atlweather").append("<br> The weather today in Atlanta is :  " + weatherDesc);
+    $("#atlweather").append("<br><br> Temperature is :  " + atlTemp + " deg F");
+    $("#atlweather").append("<br><br> Humidity is :  " + atlHumidity + "%");
+    //$("#atlweather").append("<br><br> Picture Image:  " + picImg);
+    $("#atlweather").append("<br><br> Picture Image URL :  " + picImgUrl);
+
+
+});
+
 
 function runQuery(chosenStation, queryURLBase) {
 
@@ -43,7 +75,7 @@ function runQuery(chosenStation, queryURLBase) {
             for (var i = 0; i < martadata.length; i++) {
 
 
-                console.log(numResults + "==" + martadata[i].STATION);
+                //console.log(numResults + "==" + martadata[i].STATION);
 
                 if (martadata[i].STATION == numResults || numResults == "ALL") {
 
@@ -98,27 +130,50 @@ $("#run-search").on("click", function(event) {
 
     event.preventDefault();
 
-    articleCounter = 0;
-
     var searchURL = queryURLBase;
 
-    numResults = $("#num-records-select").val();
-
+    // this is the Name
     searchTerm = document.getElementById("search-term").value.trim();
     //searchTerm = $("#search-term").val().trim();
     console.log(searchTerm);
 
+    // this is the Station
+    numResults = $("#num-records-select").val();
+
+
     //$('#targetname' ).append(",   " + searchTerm) ; 
-    $("h5").append(",   " + searchTerm) ; 
-    $("h5").append("<br><br> Please press Clear Results to refresh your Search." ) ; 
+    $("#targetname").append(", " + searchTerm);
+    //$("h5").append(",   " + searchTerm) ; 
+    $("#targetname").append("<br><br> Please press Clear Results to refresh your Search.");
 
+    // Display Modal + regex validation
+    allLetter(searchTerm);
 
-    runQuery(numResults, queryURLBase);
+    // Populate Station Table
+    //runQuery(numResults, queryURLBase);
+
 });
 
-// This button clears the top articles section
+// This button clears the Table
 $("#clear-all").on("click", function() {
-    articleCounter = 0;
+
     $("#well-section").empty();
     location.reload();
 });
+
+function allLetter(inputTxt) {
+
+
+    // regex validation
+    if (inputTxt.search(/[^a-zA-Z]+/) === -1) {
+        runQuery(numResults, queryURLBase);
+        return true;
+
+    } else {
+        // Display Modal
+        document.getElementById("myDialog").showModal();
+        return false;
+    }
+
+
+}
